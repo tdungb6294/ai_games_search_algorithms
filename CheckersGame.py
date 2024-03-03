@@ -3,6 +3,7 @@ from Game import GameState
 
 
 class CheckersGame(Game):
+    # konstruktorius saskes lentai inicializuoti
     def __init__(self, h=4, w=4):
         self.h = h  # height of the board
         self.w = w  # width of the board
@@ -21,6 +22,7 @@ class CheckersGame(Game):
         moves = self.get_all_moves(board, 'X')
         self.initial = GameState(to_move='X', utility=0, board=board, moves=moves)
 
+    # surasti visus zingsnius, kur sugauname priesu saskes
     def find_capture_moves(self, board, legal_moves, initial_position, x, y, player, captured_pieces):
         directions = [(1, -1), (1, 1), (-1, -1), (-1, 1)]  # Possible move offsets for regular pieces
 
@@ -52,10 +54,12 @@ class CheckersGame(Game):
         if captured_pieces:
             legal_moves.append((initial_position, (x, y), captured_pieces))
 
+    # grazinam dabartines busenos zingsnius
     def actions(self, state):
         """Return a list of the allowable moves at this point."""
         return state.moves
 
+    # grazinam visus imanomus zingsnius
     def get_all_moves(self, board, player_to_move):
         legal_moves = []
 
@@ -84,6 +88,7 @@ class CheckersGame(Game):
                     self.find_capture_moves(board, legal_moves, position, x, y, piece, [])
         return legal_moves
 
+    # grazinam busenos pakeitima, kai darom zingsni
     def result(self, state, move):
         """Return the state that results from making a move from a state."""
         if move not in state.moves:
@@ -102,10 +107,12 @@ class CheckersGame(Game):
                          board=board,
                          moves=moves)
 
+    # grazinam reiksme, kuri nusako, kas laimejo
     def utility(self, state, player):
         """Return the value of this final state to player."""
         return state.utility if player == 'X' else -state.utility
 
+    # skaiciuojam pergales reiksme
     def compute_utility(self, state, move):
         """If 'X' wins with this move, return 1; if 'O' wins return -1; else return 0."""
         board = state.board
@@ -123,15 +130,17 @@ class CheckersGame(Game):
         else:
             return 0
 
-
+    # tikrinam, ar baigtas zaidimas
     def terminal_test(self, state):
         """Return True if this is a final state for the game."""
         return not state.moves
 
+    # grazinam dabartini zaideja
     def to_move(self, state):
         """Return the player whose move it is in this state."""
         return state.to_move
 
+    # rodom konsole, kaip atrodo saskes lenta
     def display(self, state):
         """Print or otherwise display the state."""
         print(state)
@@ -151,10 +160,11 @@ class CheckersGame(Game):
                         print(" ", end=f" ")
         print()
 
-
+    # rodom klase string formatu
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
+    # suzaidziam zaidima
     def play_game(self, *players):
         """Play an n-person, move-alternating game."""
         state = self.initial

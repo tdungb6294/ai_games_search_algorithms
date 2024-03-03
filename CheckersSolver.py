@@ -1,29 +1,35 @@
 from ortools.sat.python import cp_model
 
 class CheckersSolver:
+    # konstruktorius skirtas sukurti CP modeli
     def __init__(self, state):
         self.model = cp_model.CpModel()
         self.variables = []
         self.state = state
 
+    # pridedam kintamuosius
     def add_variables(self):
         self.variables = [self.model.NewBoolVar(f"{move}") for move in self.state.moves]  # all individual possible moves
 
+    # pridedam ribojimus
     def add_constraints(self):
         self.model.Add(sum(self.variables) == 1)  # only one is selected
 
+    # pridedam tiksla
     def add_objective(self):
         self.model.Maximize(sum((self.variables[i] * self.evaluate_move(self.state.moves[i]) for i in
                                  range(len(self.state.moves)))))
         self.model.Minimize(sum((self.variables[i] * self.minimize_vulnerability(self.state.moves[i]) for i in
                                  range(len(self.state.moves)))))
 
+    # maksimizuojam zingsnio verte
     def evaluate_move(self, move):  # find the least risky move
         count_score = 0
         if len(move[2]) > 0:
             count_score += len(move[2])
         return count_score
 
+    # minimuozuojam zingsnio pazeidziamuma zaidejui
     def minimize_vulnerability(self, move):
         directions = [(1, -1), (1, 1), (-1, -1), (-1, 1)]  # Possible move offsets for regular pieces
         board = self.state.board
@@ -55,12 +61,14 @@ class CheckersSolver:
 
         return count_vulnerability_rate
 
+    # sprendziam musu problema, tai yra randam geriausia zingsni
     def solve(self):
         solver = cp_model.CpSolver()
         status = solver.Solve(self.model)
         if status == cp_model.OPTIMAL:
             return self.get_selected_move(solver)
 
+    # grazinam pasirinkta zingsni
     def get_selected_move(self, solver):
         i = 0
         for var in self.variables:

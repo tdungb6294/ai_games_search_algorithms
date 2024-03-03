@@ -1,3 +1,5 @@
+# 2024-03-03 The Dung Bui
+
 from CheckersGame import *
 from CheckersSolver import CheckersSolver
 from Player import alpha_beta_player, random_player, custom_player
